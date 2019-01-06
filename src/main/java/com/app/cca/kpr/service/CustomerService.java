@@ -1,25 +1,20 @@
 package com.app.cca.kpr.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.app.cca.kpr.comparator.CustomerComparator;
 import com.app.cca.kpr.model.Customer;
 import com.app.cca.kpr.model.CustomerWork;
 import com.app.cca.kpr.repository.CustomerRepository;
 import com.app.cca.kpr.repository.CustomerWorkRepository;
-import com.app.cca.kpr.utility.Errors;
-import com.app.cca.kpr.utility.Response;
+import com.app.cca.kpr.response.Response;
 import com.app.cca.kpr.validator.CustomerValidator;
 
 @Service
@@ -29,7 +24,11 @@ public class CustomerService {
 	private CustomerWorkRepository workRepository;
 	@Autowired
 	private CustomerRepository customerRepository;
-
+	
+	public CustomerService() {
+		
+	}
+	
 	public List<Customer> getAllCustomers() {
 
 //		CustomerProfile customer = new CustomerProfile("Pankaj", new Date(), "PANKAJ1234T", 1234567890,
@@ -42,8 +41,9 @@ public class CustomerService {
 		customerRepository.findAll().forEach(masterList :: add);
 		masterList.removeAll(finalList);
 		finalList.addAll(masterList);
-	    
-		Collections.sort(finalList, new CustomerComparator());
+		
+		//Comparator<Customer> byName = (Customer o1, Customer o2)->o1.getId().compareTo(o2.getId());
+		finalList.sort((Customer o1, Customer o2)->o1.getId().compareTo(o2.getId()));
 		
 		return finalList;
 	}
@@ -66,14 +66,19 @@ public class CustomerService {
 		BindException errors=null;
 		String[] errorArr = null;
 		
+		System.out.println("In customer service ............" + customer);
 		if(customer != null) {			
 
 			ValidationUtils.invokeValidator(validator, customer, errors);
-
+			
+			System.out.println("In customer service 2 ............");
+			
 			response = new Response();
 			
 			if(errors != null && errors.hasErrors())
 			{	
+				System.out.println("In customer service 3 ............");
+				
 				for (ObjectError error : errors.getAllErrors()) 
 				{					
 					errorArr = error.getCodes();
@@ -205,6 +210,14 @@ public class CustomerService {
 		customerRepository.delete(customer);
 		
 		return response;
+	}
+	
+	public void setCustomerRepository(CustomerRepository repository) {
+		this.customerRepository=repository;
+	}
+	
+	public void setCustomeWorkRepository(CustomerWorkRepository workRepository) {
+		this.workRepository=workRepository;
 	}
 	
 	/**

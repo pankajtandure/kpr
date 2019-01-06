@@ -18,6 +18,8 @@ public class CustomerValidator implements Validator{
 	public void validate(Object target, Errors errors) {
 		// TODO Auto-generated method stub
 		Customer customer = (Customer) target;
+		System.out.println("In Customer Validator ..........................");
+		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, customer.getName(), "Name is not correct");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, customer.getPancard(), "Pan card is not correct");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, customer.getBirthdate().toString(), "Birth date is not correct");
@@ -25,6 +27,7 @@ public class CustomerValidator implements Validator{
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, customer.getEmail(), "Email id is not correct");
 		checkLocality(errors, customer.getLocality(), "Locality is not correct");
 		
+		System.out.println("Customer validator ====== "+errors);
 	}
 	
 	public void checkLocality(Errors errors, String locality, String errorMessage) {
